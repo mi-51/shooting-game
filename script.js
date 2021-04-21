@@ -4,7 +4,7 @@ const CANVAS_WIDTH = 700;
 const CANVAS_HEIGHT = 500;
 
 let machine_x = 300;
-let machine_y = 450;
+let machine_y = 430;
 const MACHINE_WIDTH = 50;
 const MACHINE_HEIGHT = 50;
 
@@ -24,6 +24,7 @@ window.onload = function () {
   //値を2dとすることで2次元の絵を描ける
 
   screen_drawing();
+  animation();
 
   window.onkeydown = key_input;
 
@@ -43,7 +44,7 @@ function screen_drawing() {
   if (bullet_shot) { 
     ctx.beginPath();          //描画開始の宣言
     ctx.fillStyle = "red";  //描画塗りつぶしの色設定
-    ctx.rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT);
+    ctx.rect(bullet_x +15, bullet_y -15, BULLET_WIDTH, BULLET_HEIGHT);
     //塗りつぶしの範囲(margin-left, margin-top, width, height)
     ctx.fill();                 //描画の出力
     ctx.strokeStyle = "red"  //描画の枠線色
@@ -55,22 +56,33 @@ function screen_drawing() {
 function key_input(evt) {
   // console.log(evt.key);
   if (evt.key === "ArrowRight") {
-    machine_x += 7;
+    machine_x += 8;
   }
   if (evt.key === "ArrowLeft") {
-    machine_x -= 7;
+    machine_x -= 8;
   }
   if (evt.key === "ArrowUp") {
-    machine_y -= 7;
+    machine_y -= 8;
   }
   if (evt.key === "ArrowDown") {
-    machine_y += 7;
+    machine_y += 8;
   }
-  
-  if (evt.key === " ") {
+
+  if (bullet_shot === false && evt.key === " ") {
     bullet_x = machine_x;
     bullet_y = machine_y;
     bullet_shot = true;
   }
   screen_drawing();
+}
+
+function animation() {
+  if (bullet_shot) {
+    bullet_y -= 4;
+    if (bullet_y < 0 || bullet_x < 0 || bullet_y > canvas.height || bullet_x > canvas.width) {
+      bullet_shot = false;
+    }
+  }
+  screen_drawing();
+  requestAnimationFrame(animation);
 }
