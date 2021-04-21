@@ -8,6 +8,12 @@ let machine_y = 450;
 const MACHINE_WIDTH = 50;
 const MACHINE_HEIGHT = 50;
 
+let bullet_x;
+let bullet_y;
+const BULLET_WIDTH = 50;
+let BULLET_HEIGHT = 50;
+let bullet_shot = false;
+
 window.onload = function () {
   canvas = document.getElementById('canvas');
   canvas.width = CANVAS_WIDTH;
@@ -33,6 +39,17 @@ function screen_drawing() {
   ctx.strokeStyle = "blue"  //描画の枠線色
   ctx.lineWidth = 2;        //枠線の太さ
   ctx.stroke();             //枠線の出力
+
+  if (bullet_shot) { 
+    ctx.beginPath();          //描画開始の宣言
+    ctx.fillStyle = "black";  //描画塗りつぶしの色設定
+    ctx.rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT);
+    //塗りつぶしの範囲(margin-left, margin-top, width, height)
+    ctx.fill();                 //描画の出力
+    ctx.strokeStyle = "blue"  //描画の枠線色
+    ctx.lineWidth = 2;        //枠線の太さ
+    ctx.stroke();             //枠線の出力
+  }
 }
 
 function key_input(evt) {
