@@ -10,8 +10,8 @@ const MACHINE_HEIGHT = 50;
 
 let bullet_x;
 let bullet_y;
-const BULLET_WIDTH = 50;
-let BULLET_HEIGHT = 50;
+const BULLET_WIDTH = 20;
+let BULLET_HEIGHT = 20;
 let bullet_shot = false;
 
 window.onload = function () {
@@ -42,13 +42,13 @@ function screen_drawing() {
 
   if (bullet_shot) { 
     ctx.beginPath();          //描画開始の宣言
-    ctx.fillStyle = "black";  //描画塗りつぶしの色設定
+    ctx.fillStyle = "red";  //描画塗りつぶしの色設定
     ctx.rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT);
     //塗りつぶしの範囲(margin-left, margin-top, width, height)
     ctx.fill();                 //描画の出力
-    ctx.strokeStyle = "blue"  //描画の枠線色
+    ctx.strokeStyle = "red"  //描画の枠線色
     ctx.lineWidth = 2;        //枠線の太さ
-    ctx.stroke();             //枠線の出力
+    // ctx.stroke();             //枠線の出力
   }
 }
 
@@ -65,6 +65,12 @@ function key_input(evt) {
   }
   if (evt.key === "ArrowDown") {
     machine_y += 7;
+  }
+  
+  if (evt.key === " ") {
+    bullet_x = machine_x;
+    bullet_y = machine_y;
+    bullet_shot = true;
   }
   screen_drawing();
 }
