@@ -8,11 +8,10 @@ let machine_y = 430;
 const MACHINE_WIDTH = 50;
 const MACHINE_HEIGHT = 50;
 
-let bullet_x;
-let bullet_y;
-const BULLET_WIDTH = 20;
-let BULLET_HEIGHT = 20;
-let bullet_shot = false;
+let bullets = [];
+const BULLET_WIDTH = 10;
+const BULLET_HEIGHT = 10;
+
 
 window.onload = function () {
   canvas = document.getElementById('canvas');
@@ -30,6 +29,7 @@ window.onload = function () {
 
 }
 
+
 function screen_drawing() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   ctx.beginPath();          //描画開始の宣言
@@ -41,10 +41,11 @@ function screen_drawing() {
   ctx.lineWidth = 2;        //枠線の太さ
   ctx.stroke();             //枠線の出力
 
-  if (bullet_shot) { 
+  for (let i = 0; i < bullets.length; i++) {
+
     ctx.beginPath();          //描画開始の宣言
     ctx.fillStyle = "red";  //描画塗りつぶしの色設定
-    ctx.rect(bullet_x +15, bullet_y -15, BULLET_WIDTH, BULLET_HEIGHT);
+    ctx.rect(bullets[i].x + 20, bullets[i].y - 5, BULLET_WIDTH, BULLET_HEIGHT);
     //塗りつぶしの範囲(margin-left, margin-top, width, height)
     ctx.fill();                 //描画の出力
     ctx.strokeStyle = "red"  //描画の枠線色
@@ -53,36 +54,54 @@ function screen_drawing() {
   }
 }
 
+
 function key_input(evt) {
-  // console.log(evt.key);
-  if (evt.key === "ArrowRight") {
-    machine_x += 8;
+
+  if (evt.key === "ArrowRight") { //もしキーが押されてそれが””の中と一致したら
+    machine_x += 20;               //この動作を行ってください
   }
   if (evt.key === "ArrowLeft") {
-    machine_x -= 8;
+    machine_x -= 20;
   }
   if (evt.key === "ArrowUp") {
-    machine_y -= 8;
+    machine_y -= 20;
   }
   if (evt.key === "ArrowDown") {
-    machine_y += 8;
+    machine_y += 20;
   }
 
-  if (bullet_shot === false && evt.key === " ") {
-    bullet_x = machine_x;
-    bullet_y = machine_y;
-    bullet_shot = true;
+  if (evt.key === " ") {
+    for (let i = 0; i < 12; i++) {
+      let deg = i * 30;
+      let vy = 10 * Math.cos(deg);
+      let vx = 10 * Math.sin(deg);
+
+      bullets.push({
+        x: machine_x,
+        y: machine_y,
+        vx: vx,
+        vy: vy,
+      });
+    }
   }
   screen_drawing();
 }
 
+
 function animation() {
-  if (bullet_shot) {
-    bullet_y -= 4;
-    if (bullet_y < 0 || bullet_x < 0 || bullet_y > canvas.height || bullet_x > canvas.width) {
-      bullet_shot = false;
+  let new_bullets = [];
+
+  for (let i = 0; i < bullets.length; i++) {
+    bullets[i].x -= bullets[i].vx;   //弾が動く早さ
+    bullets[i].y -= bullets[i].vy;   //弾が動く早さ
+
+    if (0 <= bullets[i].x && bullets[i].x < canvas.width &&
+      0 <= bullets[i].y && bullets[i].y < canvas.height) {
+      new_bullets.push(bullets[i]);
     }
   }
+  bullets = new_bullets;
+
   screen_drawing();
   requestAnimationFrame(animation);
 }
