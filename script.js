@@ -1,12 +1,46 @@
 let canvas, ctx;
 
+class object {
+  constructor(x, y, vx, vy, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  }
+
+  move() {
+    this.x += this.vx;
+    this.y += this.vy;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
+    //描画開始の宣言
+    ctx.fillStyle = this.color;  //描画塗りつぶしの色設定
+    //塗りつぶしの範囲(margin-left, margin-top, width, height)
+    ctx.fill();                 //描画の出力
+    ctx.rect(
+      this.x - this.width / 2,
+      this.y,
+      this.width,
+      this.height);
+    ctx.strokeStyle = this.color;  //描画の枠線色
+    ctx.lineWidth = 2;        //枠線の太さ
+  }
+
+}
+
 const CANVAS_WIDTH = 700;
 const CANVAS_HEIGHT = 500;
 
-let machine_x = 300;
-let machine_y = 430;
 const MACHINE_WIDTH = 50;
 const MACHINE_HEIGHT = 50;
+
+let my_machine = new object(100, 100, 0, 0, MACHINE_WIDTH, MACHINE_HEIGHT, "blue");
 
 let bullets = [];
 const BULLET_WIDTH = 10;
@@ -32,25 +66,10 @@ window.onload = function () {
 
 function screen_drawing() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  ctx.beginPath();          //描画開始の宣言
-  ctx.fillStyle = "black";  //描画塗りつぶしの色設定
-  ctx.rect(machine_x, machine_y, MACHINE_WIDTH, MACHINE_HEIGHT);
-  //塗りつぶしの範囲(margin-left, margin-top, width, height)
-  ctx.fill();                 //描画の出力
-  ctx.strokeStyle = "blue"  //描画の枠線色
-  ctx.lineWidth = 2;        //枠線の太さ
-  ctx.stroke();             //枠線の出力
+  my_machine.draw();
 
   for (let i = 0; i < bullets.length; i++) {
-
-    ctx.beginPath();          //描画開始の宣言
-    ctx.fillStyle = "red";  //描画塗りつぶしの色設定
-    ctx.rect(bullets[i].x + 20, bullets[i].y - 5, BULLET_WIDTH, BULLET_HEIGHT);
-    //塗りつぶしの範囲(margin-left, margin-top, width, height)
-    ctx.fill();                 //描画の出力
-    ctx.strokeStyle = "red"  //描画の枠線色
-    ctx.lineWidth = 2;        //枠線の太さ
-    // ctx.stroke();             //枠線の出力
+    bullets[i].draw();
   }
 }
 
@@ -58,16 +77,16 @@ function screen_drawing() {
 function key_input(evt) {
 
   if (evt.key === "ArrowRight") { //もしキーが押されてそれが””の中と一致したら
-    machine_x += 20;               //この動作を行ってください
+    my_machine.x += 20;               //この動作を行ってください
   }
   if (evt.key === "ArrowLeft") {
-    machine_x -= 20;
+    my_machine.x -= 20;
   }
   if (evt.key === "ArrowUp") {
-    machine_y -= 20;
+    my_machine.y -= 20;
   }
   if (evt.key === "ArrowDown") {
-    machine_y += 20;
+    my_machine.y += 20;
   }
 
   if (evt.key === " ") {
@@ -76,12 +95,9 @@ function key_input(evt) {
       let vy = 10 * Math.cos(deg);
       let vx = 10 * Math.sin(deg);
 
-      bullets.push({
-        x: machine_x,
-        y: machine_y,
-        vx: vx,
-        vy: vy,
-      });
+      bullets.push(
+        new object(my_machine.x, my_machine.y, vx, vy, BULLET_WIDTH, BULLET_HEIGHT, "red")
+      );
     }
   }
   screen_drawing();
@@ -92,8 +108,7 @@ function animation() {
   let new_bullets = [];
 
   for (let i = 0; i < bullets.length; i++) {
-    bullets[i].x -= bullets[i].vx;   //弾が動く早さ
-    bullets[i].y -= bullets[i].vy;   //弾が動く早さ
+    bullets[i].move();
 
     if (0 <= bullets[i].x && bullets[i].x < canvas.width &&
       0 <= bullets[i].y && bullets[i].y < canvas.height) {
