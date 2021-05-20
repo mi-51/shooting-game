@@ -1,39 +1,5 @@
 let canvas, ctx;
 
-class object {
-  constructor(x, y, vx, vy, width, height, color) {
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.width = width;
-    this.height = height;
-    this.color = color;
-  }
-
-  move() {
-    this.x += this.vx;
-    this.y += this.vy;
-  }
-
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
-    //描画開始の宣言
-    ctx.fillStyle = this.color;  //描画塗りつぶしの色設定
-    //塗りつぶしの範囲(margin-left, margin-top, width, height)
-    ctx.fill();                 //描画の出力
-    ctx.rect(
-      this.x - this.width / 2,
-      this.y,
-      this.width,
-      this.height);
-    ctx.strokeStyle = this.color;  //描画の枠線色
-    ctx.lineWidth = 2;        //枠線の太さ
-  }
-
-}
-
 const CANVAS_WIDTH = 700;
 const CANVAS_HEIGHT = 500;
 
@@ -46,8 +12,12 @@ let bullets = [];
 const BULLET_WIDTH = 10;
 const BULLET_HEIGHT = 10;
 
+let game, game2;
 
 window.onload = function () {
+  game = new Game("canvas2", CANVAS_WIDTH, CANVAS_HEIGHT);
+  game2 = new Game("canvas3", CANVAS_WIDTH, CANVAS_HEIGHT);
+
   canvas = document.getElementById('canvas');
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
@@ -59,23 +29,23 @@ window.onload = function () {
   screen_drawing();
   animation();
 
-  window.onkeydown = key_input;
+  window.addEventListener("keydown", key_input);
 
 }
 
 
 function screen_drawing() {
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  my_machine.draw();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  my_machine.draw(ctx);
 
   for (let i = 0; i < bullets.length; i++) {
-    bullets[i].draw();
+    bullets[i].draw(ctx);
   }
 }
 
 
 function key_input(evt) {
-
+  console.log(evt.key);
   if (evt.key === "ArrowRight") { //もしキーが押されてそれが””の中と一致したら
     my_machine.x += 20;               //この動作を行ってください
   }
