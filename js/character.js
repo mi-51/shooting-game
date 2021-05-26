@@ -1,12 +1,12 @@
 class object {
-  constructor(x, y, vx, vy, width, height, color) {
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.width = width;
-    this.height = height;
-    this.color = color;
+  constructor(param) {
+    this.x = param.x;
+    this.y = param.y;
+    this.vx = param.vx;
+    this.vy = param.vy;
+    this.width = param.width;
+    this.height = param.height;
+    this.color = param.color;
   }
 
   move() {
