@@ -30,4 +30,30 @@ class object {
     ctx.lineWidth = 2;        //枠線の太さ
   }
 
+  touch(rival) {
+    let my_right = this.x + this.width;
+    let my_left = this.x;
+    let my_top = this.y;
+    let my_bottom = this.y + this.width;
+    let rival_right = rival.x + rival.width;
+    let rival_left = rival.x;
+    let rival_top = rival.y;
+    let rival_bottom = rival.y + rival.width;
+    if (my_right > rival_left &&
+      my_left < rival_right &&
+      my_bottom > rival_top &&
+      my_top < rival_bottom) {
+      return true;
+    }
+    else {
+      return false;
+    }
+
+    //34行目〜50行目の書き換え↓
+    // return this.x + this.width > rival.x &&
+    //   this.x < rival.x + rival.width &&
+    //   this.y + this.height > rival.y &&
+    //   this.y + this.height < rival.y + rival.height;
+
+  }
 }

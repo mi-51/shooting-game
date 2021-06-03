@@ -23,8 +23,6 @@ class Game {
     this.my_machine = new object({
       x: 100,
       y: 100,
-      vx: 0,
-      vy: 0,
       width: MACHINE_WIDTH,
       height: MACHINE_HEIGHT,
       color: "blue"
@@ -33,7 +31,7 @@ class Game {
     this.bullets = [];
     this.enemies = [];
 
-    this.draw_canvas();
+    // this.draw_canvas();
 
     this.key_status = {};
 
@@ -46,18 +44,35 @@ class Game {
       this.key_status[evt.code] = false;
     }.bind(this));
 
+    this.init();
+
     this.animation();
+  }
+
+  init() {
+    this.my_machine = new object({
+      x: 100,
+      y: 100,
+      width: MACHINE_WIDTH,
+      height: MACHINE_HEIGHT,
+      color: "blue"
+    });
+
+    this.bullets = new Set();
+    this.enemies = new Set();
+    this.framecount = 0;
   }
 
   draw_canvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 
-    for (let i = 0; i < this.bullets.length; i++) {
-      this.bullets[i].draw(this.ctx);
+    // for (let i = 0; i < this.bullets.length; i++) {
+    for (let bullet of this.bullets){
+      bullet.draw(this.ctx);
     }
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].draw(this.ctx);
+    for (let enemy of this.enemies) {
+      enemy.draw(this.ctx);
     }
 
     this.my_machine.draw(this.ctx);
@@ -68,7 +83,7 @@ class Game {
 
     if (this.framecount % 60 === 0) {
 
-      this.enemies.push(
+      this.enemies.add(
         new object({
           x: 300,
           y: 100 + this.framecount,
@@ -81,29 +96,32 @@ class Game {
     }
     this.framecount++;
 
-    // console.log(this.a_down);
-    let new_bullets = [];
+    for (let bullet of this.bullets) {
+      bullet.move();
 
-    for (let i = 0; i < this.bullets.length; i++) {
-      this.bullets[i].move();
-
-      if (this.isinside(this.bullets[i])) {
-        new_bullets.push(this.bullets[i]);
+      if (!this.isinside(bullet)) {
+        this.bullets.delete(bullet);
       }
     }
-    this.bullets = new_bullets;
 
+    for (let enemy of this.enemies) {
+      enemy.move();
 
-    let new_enemies = [];
-
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].move();
-
-      if (this.isinside(this.enemies[i])) {
-        new_enemies.push(this.enemies[i]);
+      if (!this.isinside(enemy)) {
+        this.enemies.delete(enemy);
       }
     }
-    this.enemies = new_enemies;
+
+
+    //衝突判定
+    for (let bullet of this.bullets) {
+      for (let enemy of this.enemies) {
+        if (bullet.touch(enemy)) {
+          this.bullets.delete(bullet);
+          this.enemies.delete(enemy);
+        }
+      }
+    }
 
 
     this.draw_canvas();
@@ -142,7 +160,7 @@ class Game {
         let vy = 10 * Math.cos(deg);
         let vx = 10 * Math.sin(deg);
 
-        this.bullets.push(
+        this.bullets.add(
           new object({
             x: this.my_machine.x,
             y: this.my_machine.y,
